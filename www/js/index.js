@@ -28,6 +28,13 @@ var app = {
     // 'pause', 'resume', etc.
     onDeviceReady: function() {
         this.receivedEvent('deviceready');
+		console.log(navigator.notification);
+		navigator.notification.alert(
+    'You are the winner!',  // message
+    null,         // callback
+    'Game Over',            // title
+    'Done'                  // buttonName
+);
     },
 
     // Update DOM on a Received Event
