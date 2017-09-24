@@ -1,0 +1,43 @@
+language: android
+android:
+  components:
+    - tools
+    - platform-tools
+    - tools
+
+    # The BuildTools version used by your project
+    - build-tools-25.0.0
+
+    # The SDK version used to compile your project
+    - android-25
+node_js:
+  - "8"
+dist: trusty
+cache:
+  directories:
+     - ./node_modules
+before_install:
+  - nvm install 8
+  - nvm use 8
+  - npm i -g cordova
+script:
+  - sh scripts/unpack-www.sh
+  - cordova platform add android
+  - cordova build android -- --gradleArg=-PcdvMinSdkVersion=25
+before_deploy:
+  - cp platforms/android/build/outputs/apk/android-debug.apk hacksas-android-${TRAVIS_BRANCH}.apk
+  - cp platforms/android/build/outputs/apk/android-debug.apk gh-pages/hacksas-android-latest.apk
+deploy:
+  - provider: pages
+    local_dir: gh-pages
+    skip_cleanup: true
+    github_token: $GITHUB_TOKEN # Set in travis-ci.org dashboard
+    on:
+      branch: master
+  - provider: releases
+    api_key: $GITHUB_TOKEN
+    file_glob: true
+    file: hacksas-android-*.apk
+    skip_cleanup: true
+    on:
+      tags: true
